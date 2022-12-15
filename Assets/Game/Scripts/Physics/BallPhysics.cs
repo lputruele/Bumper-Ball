@@ -63,7 +63,6 @@ namespace BumperBallGame
                     {
                         bounceSpeed = maxBounceSpeed;
                     }
-                    Debug.Log(force);
                     body.AddForce(force * moveSpeed * bounceSpeed);
                 }
                 bounceOff = false;
@@ -100,7 +99,7 @@ namespace BumperBallGame
             if (!other.gameObject.GetComponent<BallPhysics>())
             {
                 canMove = false;
-                destroyTimer = 300;
+                destroyTimer = 100;
             }
         }
 
@@ -109,7 +108,6 @@ namespace BumperBallGame
             gameObject.SetActive(false);
             PlayerDeathEvent evt = Events.PlayerDeathEvent;
             evt.Player = gameObject;
-            evt.RemainingPlayerCount--;
             EventManager.Broadcast(evt);
         }
     }

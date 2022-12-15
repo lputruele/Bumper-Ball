@@ -15,7 +15,6 @@ namespace BumperBallGame
     public class PlayerDeathEvent : GameEvent 
     {
         public GameObject Player;
-        public int RemainingPlayerCount;
     }
 
 }

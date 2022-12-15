@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -77,11 +76,7 @@ namespace BumperBallGame
         {
             isGameEnding = true;
             // play a sound on win
-            var audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.clip = VictorySound;
-            audioSource.playOnAwake = false;
-            audioSource.outputAudioMixerGroup = AudioUtility.GetAudioGroup(AudioUtility.AudioGroups.HUDVictory);
-            audioSource.PlayScheduled(AudioSettings.dspTime + DelayBeforeWinMessage);
+            AudioUtility.CreateSFX(VictorySound, transform.position, AudioUtility.AudioGroups.HUDVictory, 0f);
 
             WinText.GetComponent<TMP_Text>().SetText(winnerName + " " + WinGameMessage);
             RestartButton.SetActive(true);
