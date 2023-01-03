@@ -7,37 +7,35 @@ using UnityEngine.SceneManagement;
 
 namespace BumperBallGame
 {
+    public enum GameMode
+    {
+        SURVIVAL,
+        DEATHMATCH
+    }
     public class GameFlowManager : MonoBehaviour
     {
         [Header("Parameters")]
 
-        [Tooltip("Win game message")]
-        public string WinGameMessage;
-
-        [Tooltip("Duration of delay before the win message")]
-        public float DelayBeforeWinMessage = 2f;
-
         [Tooltip("Sound played on win")] public AudioClip VictorySound;
 
-        [Tooltip("Restart button")]
-        public GameObject RestartButton;
-        [Tooltip("Exit button")]
-        public GameObject ExitButton;
-        [Tooltip("Win Text UI")]
-        public GameObject WinText;
+        public GameObject botPrefab;
+        public GameObject playerPrefab;
+        public List<Material> ballMaterials;
+        public List<Material> arenaMaterials;
+        public GameObject arena;
 
-        public List<GameObject> Players;
-        private int playersRemaining;
-        private bool isGameEnding;
+        private Vector3[] playerPositions = { new Vector3(-3, 0, -3), new Vector3(3, 0, -3), new Vector3(3, 0, 3), new Vector3(-3, 0, 3) };
 
         void Awake()
         {
-            EventManager.AddListener<PlayerDeathEvent>(OnPlayerDeath);
-            if (Players != null)
+            InitializePlayers();
+            arena.GetComponentInChildren<Renderer>().material = arenaMaterials[Random.Range(0,arenaMaterials.Count)];
+            EventManager.AddListener<GameOverEvent>(OnGameOver);
+            switch (GameData.gameMode)
             {
-                playersRemaining = Players.Count;
-            }
-            isGameEnding = false;
+                case GameMode.SURVIVAL: gameObject.AddComponent<SurvivalManager>();break;
+                case GameMode.DEATHMATCH: gameObject.AddComponent<DeathMatchManager>(); break;
+            }       
         }
 
         void Start()
@@ -45,48 +43,30 @@ namespace BumperBallGame
             AudioUtility.SetMasterVolume(1);
         }
 
-        void Update()
-        {
-            if (playersRemaining < 2 && !isGameEnding)
-            {
-                string winner = "";
-                foreach (GameObject p in Players)
-                {
-                    if (p.activeInHierarchy)
-                    {
-                        winner = p.name;
-                    }
-                }
-                EndGame(winner);
-            }
-        }
-        void OnPlayerDeath(PlayerDeathEvent evt) => UpdateGame(evt.Player);
+        
 
-        void UpdateGame(GameObject deadPlayer)
+        void OnGameOver(GameOverEvent evt)
         {
-            if (deadPlayer.GetComponent<PlayerController>())
-            {
-                RestartButton.SetActive(true);
-                ExitButton.SetActive(true);
-            }
-            playersRemaining--;
-        }
-
-        void EndGame(string winnerName)
-        {
-            isGameEnding = true;
             // play a sound on win
             AudioUtility.CreateSFX(VictorySound, transform.position, AudioUtility.AudioGroups.HUDVictory, 0f);
-
-            WinText.GetComponent<TMP_Text>().SetText(winnerName + " " + WinGameMessage);
-            RestartButton.SetActive(true);
-            ExitButton.SetActive(true);
-            WinText.SetActive(true);
         }
 
         void OnDestroy()
         {
-            EventManager.RemoveListener<PlayerDeathEvent>(OnPlayerDeath);
+            EventManager.RemoveListener<GameOverEvent>(OnGameOver);
+        }
+
+        private void InitializePlayers()
+        {
+            GameObject player = Instantiate(playerPrefab, playerPositions[0], Quaternion.identity);
+            player.GetComponentInChildren<Renderer>().material = ballMaterials[0];
+            player.name = "1P";
+            for (int i = 0; i < GameData.bots; i++)
+            { 
+                GameObject bot = Instantiate(botPrefab, playerPositions[i+1], Quaternion.identity);
+                bot.GetComponentInChildren<Renderer>().material = ballMaterials[i+1];
+                bot.name = "BOT"+(i+1);
+            }
         }
     }
 }

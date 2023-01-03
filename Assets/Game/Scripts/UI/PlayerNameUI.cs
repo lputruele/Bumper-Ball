@@ -1,24 +1,31 @@
+using BumperBallGame;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-namespace BumperBallGame
+namespace Game.UI
 {
     public class PlayerNameUI : MonoBehaviour
     {
-        public GameObject Player;
-        // Start is called before the first frame update
+        public GameObject player;
+        public TMP_Text floatingText;
+
         void Awake()
         {
-            transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y + 1, Player.transform.position.z);
-
+            floatingText = GetComponent<TMP_Text>();
         }
 
-        // Update is called once per frame
         void LateUpdate()
         {
-            transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y + 1, Player.transform.position.z);
+            if (player != null) {
+                floatingText.text = player.transform.parent.name;
+                transform.position = new Vector3(player.transform.position.x, player.transform.position.y + 1, player.transform.position.z);
+                if (!player.activeInHierarchy)
+                {
+                    gameObject.SetActive(false);
+                }
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class FieldOfView : MonoBehaviour
 {
@@ -9,19 +10,26 @@ public class FieldOfView : MonoBehaviour
     public float angle;
 
     public Transform targetRef;
-    public Transform borderRef;
+    public Transform centerRef;
 
     public LayerMask targetMask;
     public LayerMask obstacleMask;
-    public LayerMask borderMask;
+    public LayerMask centerMask;
+
+    //public Transform Arena;
 
     public bool canSeeTarget;
-    public bool canSeeBorder;
+    public bool canSeeCenter;
 
-    // Start is called before the first frame update
     void Start()
     {
-        //targetRef = GameObject.FindGameObjectWithTag("Player");
+        centerRef = GameObject.FindGameObjectWithTag("Center").transform;
+        StartCoroutine(FOVRoutine());
+    }
+
+    void OnEnable()
+    {
+        centerRef = GameObject.FindGameObjectWithTag("Center").transform;
         StartCoroutine(FOVRoutine());
     }
 
@@ -38,15 +46,13 @@ public class FieldOfView : MonoBehaviour
 
     private void FieldOfViewCheck()
     {
+        canSeeCenter = Vector3.Distance(transform.position, centerRef.position) < radius * 0.57f;
         targetRef = RangeCheck(targetMask, radius);
-        borderRef = RangeCheck(borderMask, radius * 0.6f);
         canSeeTarget = targetRef != null;
-        canSeeBorder = borderRef != null;
     }
 
     private Transform RangeCheck(LayerMask mask, float rad)
     {
-        //Vector3 center = new Vector3(transform., 0, rad);
         Collider[] rangeChecks = Physics.OverlapSphere(transform.position, rad, mask);
         Transform minTarget = null;
         float minDistance = 10000;

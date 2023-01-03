@@ -22,13 +22,13 @@ public class FieldOfViewEditor : Editor
         if (fov.canSeeTarget)
         {
             Handles.color = Color.green;
-            Handles.DrawLine(fov.transform.position, fov.targetRef.transform.position);
+            Handles.DrawLine(fov.transform.position, fov.targetRef.position);
         }
 
-        if (fov.canSeeBorder)
+        if (fov.canSeeCenter)
         {
             Handles.color = Color.red;
-            Handles.DrawLine(fov.transform.position, fov.borderRef.transform.position);
+            Handles.DrawLine(fov.transform.position, fov.centerRef.position);
         }
     }
 

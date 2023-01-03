@@ -7,12 +7,12 @@ namespace BumperBallGame
 {
     public class PlayerController : MonoBehaviour
     {
-        private BallPhysics ballPhysics;
+        private BallController ball;
 
 
         private void Awake()
         {
-            ballPhysics = GetComponent<BallPhysics>();
+            ball = GetComponent<BallController>();
         }
 
         public void OnMovement(InputAction.CallbackContext context)
@@ -22,15 +22,13 @@ namespace BumperBallGame
             Vector2 move = context.ReadValue<Vector2>();        
             if (context.control.parent is Keyboard)
             {
-                ballPhysics.CurrentMove = new Vector3(move.x, 0.0f, move.y);
+                ball.CurrentMove = new Vector3(move.x, 0.0f, move.y);
             }
             else
             {
-                ballPhysics.CurrentMove = new Vector3(move.x, 0.0f, move.y).normalized;
-                ballPhysics.CurrentMove = ballPhysics.CurrentMove * 2f;
+                ball.CurrentMove = new Vector3(move.x, 0.0f, move.y).normalized;
+                ball.CurrentMove = ball.CurrentMove * 1.2f;
             }
         }
-
-
     }
 }
