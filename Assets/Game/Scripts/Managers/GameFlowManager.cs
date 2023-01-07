@@ -10,7 +10,8 @@ namespace BumperBallGame
     public enum GameMode
     {
         SURVIVAL,
-        DEATHMATCH
+        DEATHMATCH,
+        HOLD_THE_FLAG
     }
     public class GameFlowManager : MonoBehaviour
     {
@@ -23,24 +24,26 @@ namespace BumperBallGame
         public List<Material> ballMaterials;
         public List<Material> arenaMaterials;
         public GameObject arena;
+        public GameObject flag;
 
         private Vector3[] playerPositions = { new Vector3(-3, 0, -3), new Vector3(3, 0, -3), new Vector3(3, 0, 3), new Vector3(-3, 0, 3) };
 
         void Awake()
         {
             InitializePlayers();
-            arena.GetComponentInChildren<Renderer>().material = arenaMaterials[Random.Range(0,arenaMaterials.Count)];
-            EventManager.AddListener<GameOverEvent>(OnGameOver);
             switch (GameData.gameMode)
             {
-                case GameMode.SURVIVAL: gameObject.AddComponent<SurvivalManager>();break;
+                case GameMode.SURVIVAL: gameObject.AddComponent<SurvivalManager>(); break;
                 case GameMode.DEATHMATCH: gameObject.AddComponent<DeathMatchManager>(); break;
-            }       
+                case GameMode.HOLD_THE_FLAG: gameObject.AddComponent<HoldTheFlagManager>(); flag.SetActive(true); break;
+            }
+            arena.GetComponentInChildren<Renderer>().material = arenaMaterials[Random.Range(0,arenaMaterials.Count)];
+            EventManager.AddListener<GameOverEvent>(OnGameOver);              
         }
 
         void Start()
         {
-            AudioUtility.SetMasterVolume(1);
+            AudioUtility.SetMasterVolume(1);         
         }
 
         

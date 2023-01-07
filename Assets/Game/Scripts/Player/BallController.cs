@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
@@ -8,21 +9,25 @@ namespace BumperBallGame
 {
     public class BallController : MonoBehaviour
     {
-        public float moveSpeed = 3f;
-        public float minBounceSpeed = 5f;
-        public float maxBounceSpeed = 10f;
+        public const float STUN_TIME_PLAYER = 0.3f;
+        public const float STUN_TIME_BOT = 0.35f;
+        public const float DESTROY_TIME = 2.1f;
+        public const float GHOST_TIME = 0.9f;
+
+        public const float MOVE_SPEED = 9.5f;
+        public const float BOUNCE_SPEED = 7.5f;
+
         public Vector3 initialPos;
 
         public Vector3 CurrentMove { get; set; }
 
         private Rigidbody body;
-        private Collider m_Collider;
         private Renderer m_Renderer;
         private Collision collision;
         private GameObject lastPlayerTouched;
-        private int stunTimer;
-        private int destroyTimer;
-        private int ghostTimer;
+        private float stunTimer;
+        private float destroyTimer;
+        private float ghostTimer;
         private bool bounceOff;
         private bool canMove;
         private bool isPlayer;
@@ -30,6 +35,8 @@ namespace BumperBallGame
         public bool isGhost;
 
         public AudioClip BounceSound;
+        public AudioClip DeathSound;
+        public AudioClip SpawnSound;
 
 
 
@@ -37,42 +44,35 @@ namespace BumperBallGame
         {
             CurrentMove = Vector3.zero;
             body = GetComponent<Rigidbody>();
-            m_Collider = GetComponent<Collider>();
             m_Renderer = GetComponent<Renderer>();
             canMove = true;
-            destroyTimer = -1;
+            destroyTimer = float.PositiveInfinity;
+            stunTimer = float.NegativeInfinity;
+            ghostTimer = float.PositiveInfinity;
             isPlayer = GetComponent<PlayerController>() != null;
             initialPos = transform.position;
             EventManager.AddListener<GameOverEvent>(OnGameOver);
             Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Target"), LayerMask.NameToLayer("Ghost"));
+            Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Ghost"), LayerMask.NameToLayer("Ghost"));
         }
 
         private void OnEnable()
         {
+            if (SpawnSound)
+                AudioUtility.CreateSFX(SpawnSound, transform.position, AudioUtility.AudioGroups.Spawn, 0f);
             transform.position = initialPos;
-            TurnInvulnerable();
         }
 
         private void Update()
         {
-            if (stunTimer > 0)
+            if (destroyTimer < Time.time)
             {
-                stunTimer--;
-            }
-            if (destroyTimer > 0)
-            {
-                destroyTimer--;
-            }
-            if (destroyTimer == 0)
-            {
+                destroyTimer = float.PositiveInfinity;
                 Die();
             }
-            if (ghostTimer > 0)
+            if (ghostTimer < Time.time)
             {
-                ghostTimer--;
-            }
-            if (ghostTimer == 0)
-            {
+                ghostTimer = float.PositiveInfinity;
                 isGhost = false;
                 gameObject.layer = LayerMask.NameToLayer("Target");
                 Color oldColor = m_Renderer.material.color;
@@ -92,21 +92,17 @@ namespace BumperBallGame
                     force.y = 0.0f;
                     //float bounceSpeed = minBounceSpeed + body.velocity.magnitude;
                     //float bounceSpeed = minBounceSpeed + collision.rigidbody.velocity.magnitude;
-                    float bounceSpeed = minBounceSpeed;
-                    if (bounceSpeed > maxBounceSpeed)
-                    {
-                        bounceSpeed = maxBounceSpeed;
-                    }
-                    body.AddForce(force * moveSpeed * bounceSpeed);
+                    float bounceSpeed = BOUNCE_SPEED;
+                    body.AddForce(force * MOVE_SPEED * bounceSpeed);
                 }
                 bounceOff = false;
-                stunTimer = isPlayer?10:13;
+                stunTimer = isPlayer? Time.time + STUN_TIME_PLAYER : Time.time + STUN_TIME_BOT;
             }
             else
             {
-                if (stunTimer == 0 && canMove && !gameOver)
+                if (stunTimer < Time.time && canMove && !gameOver)
                 {
-                    body.AddForce(CurrentMove * moveSpeed);
+                    body.AddForce(CurrentMove * MOVE_SPEED);
                 }
             }
         }
@@ -119,11 +115,15 @@ namespace BumperBallGame
                 lastPlayerTouched = collision.gameObject;
                 bounceOff = true;
                 if (BounceSound)
-                    AudioUtility.CreateSFX(BounceSound, transform.position, AudioUtility.AudioGroups.Collision, 0f);          
+                    AudioUtility.CreateSFX(BounceSound, transform.position, AudioUtility.AudioGroups.Collision, 0f);
+                BumpEvent bumpEvt = Events.BumpEvent;
+                bumpEvt.Bumped = gameObject;
+                bumpEvt.Bumper = other.gameObject;
+                EventManager.Broadcast(bumpEvt);
             }
             else
             {
-                destroyTimer = -1;
+                destroyTimer = float.PositiveInfinity;
                 canMove = true;
             }
         }
@@ -133,19 +133,35 @@ namespace BumperBallGame
             if (other.gameObject.tag == "Floor")
             {
                 canMove = false;
-                destroyTimer = 100;
+                destroyTimer = Time.time + DESTROY_TIME;
             }
             collision = null;
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.gameObject.tag == "Flag")
+            {
+                if (other.transform.position == Vector3.zero)
+                {
+                    FlagGrabbedEvent flagGrabbedEvt = Events.FlagGrabbedEvent;
+                    flagGrabbedEvt.grabber = gameObject;
+                    EventManager.Broadcast(flagGrabbedEvt);
+                }
+            }
+        }
+
         private void Die()
         {
+            //if (DeathSound)
+            //    AudioUtility.CreateSFX(DeathSound, transform.position, AudioUtility.AudioGroups.Death, 0f);
             gameObject.SetActive(false);
-            destroyTimer = -1;
+            destroyTimer = float.PositiveInfinity;
             PlayerDeathEvent evt = Events.PlayerDeathEvent;
             evt.Killed = gameObject;
             evt.Killer = lastPlayerTouched;
             EventManager.Broadcast(evt);
+            TurnInvulnerable();
         }
 
         private void TurnInvulnerable ()
@@ -153,9 +169,9 @@ namespace BumperBallGame
             isGhost = true;
             gameObject.layer = LayerMask.NameToLayer("Ghost");
             Color oldColor = m_Renderer.material.color;
-            Color newColor = new Color(oldColor.r, oldColor.g, oldColor.b, 0.35f);
+            Color newColor = new Color(oldColor.r, oldColor.g, oldColor.b, 0.2f);
             m_Renderer.material.SetColor("_Color", newColor);
-            ghostTimer = 100;
+            ghostTimer = Time.time + GHOST_TIME;
         }
 
         void OnGameOver(GameOverEvent evt)

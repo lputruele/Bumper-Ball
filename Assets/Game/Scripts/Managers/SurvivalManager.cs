@@ -12,7 +12,7 @@ namespace BumperBallGame
         private int playersRemaining;
         private bool gameOver;      
 
-        void Awake()
+        void Start()
         {
             players = new List<GameObject>();
             lives = GameData.lives;
@@ -63,6 +63,8 @@ namespace BumperBallGame
                     evt.Killed.SetActive(true);
                 }
             }
+            UpdateScoreEvent updateScoreEvt = Events.UpdateScoreEvent;
+            EventManager.Broadcast(updateScoreEvt);
         }
 
         void OnDestroy()

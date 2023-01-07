@@ -6,27 +6,35 @@ namespace BumperBallGame
 {
     public class AudioUtility
     {
-        static AudioManager m_AudioManager;
+        private static AudioManager m_AudioManager;
 
         public enum AudioGroups
         {
+            Music,
             Collision,
-            HUDVictory
+            Death,
+            Spawn,
+            HUDVictory,
+            UI
         }
 
         public static void CreateSFX(AudioClip clip, Vector3 position, AudioGroups audioGroup, float spatialBlend, float rolloffDistanceMin = 1f)
         {
-            GameObject impactSFXInstance = new GameObject("SFX_" + clip.name);
-            impactSFXInstance.transform.position = position;
-            AudioSource source = impactSFXInstance.AddComponent<AudioSource>();
-            source.clip = clip;
-            source.spatialBlend = spatialBlend;
-            source.minDistance = rolloffDistanceMin;
-            source.Play();
+            if (m_AudioManager != null && m_AudioManager.CanPlay)
+            {
+                GameObject impactSFXInstance = new GameObject("SFX_" + clip.name);
+                impactSFXInstance.transform.position = position;
+                AudioSource source = impactSFXInstance.AddComponent<AudioSource>();
+                source.clip = clip;
+                source.spatialBlend = spatialBlend;
+                source.minDistance = rolloffDistanceMin;
+                source.Play();
 
-            source.outputAudioMixerGroup = GetAudioGroup(audioGroup);
+                source.outputAudioMixerGroup = GetAudioGroup(audioGroup);
 
-            m_AudioManager.EnsureSFXDestruction(source);
+                m_AudioManager.HandleMultipleSounds();
+                m_AudioManager.EnsureSFXDestruction(source);
+            }
         }
 
         public static AudioMixerGroup GetAudioGroup(AudioGroups group)

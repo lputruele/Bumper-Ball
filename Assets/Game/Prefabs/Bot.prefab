@@ -433,7 +433,10 @@ MonoBehaviour:
   minBounceSpeed: 10
   maxBounceSpeed: 25
   initialPos: {x: 0, y: 0, z: 0}
-  BounceSound: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
+  isGhost: 0
+  BounceSound: {fileID: 8300000, guid: e11a5a019377fbd4c81caa0adcb4c236, type: 3}
+  DeathSound: {fileID: 8300000, guid: 7e9ee6dc04a5d40d1a5dfc4beb9865e7, type: 3}
+  SpawnSound: {fileID: 8300000, guid: cc6699269b4c1d44ea1e860518b9bb73, type: 3}
 --- !u!54 &8048225049615502205
 Rigidbody:
   m_ObjectHideFlags: 0

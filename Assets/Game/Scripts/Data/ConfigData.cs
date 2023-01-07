@@ -9,14 +9,14 @@ namespace BumperBallGame
     {
         public GameMode gameMode;
         public int bots;
-        public int fragLimit;
+        public int scoreLimit;
         public int lives;
 
-        public ConfigData(GameMode gameMode, int bots, int fragLimit, int lives)
+        public ConfigData(GameMode gameMode, int bots, int scoreLimit, int lives)
         {
             this.gameMode = gameMode;
             this.bots = bots;
-            this.fragLimit = fragLimit;
+            this.scoreLimit = scoreLimit;
             this.lives = lives;
         }
     }

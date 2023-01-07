@@ -7,13 +7,13 @@ namespace BumperBallGame
 {
     public class DeathMatchManager : GameModeManager
     {
-        public int fragLimit = 10;
+        public int scoreLimit = 10;
         private bool gameOver;
 
-        void Awake()
+        void Start()
         {
             players = new List<GameObject>();
-            fragLimit = GameData.fragLimit;
+            scoreLimit = GameData.scoreLimit;
             EventManager.AddListener<PlayerDeathEvent>(OnPlayerDeath);
             BallController[] balls = FindObjectsOfType<BallController>();
             foreach (BallController ball in balls)
@@ -31,7 +31,7 @@ namespace BumperBallGame
             if (!gameOver)
             {
                 scores[evt.Killer] += 1;
-                if (scores[evt.Killer] >= fragLimit)
+                if (scores[evt.Killer] >= scoreLimit)
                 {
                     GameOverEvent gameOverEvt = Events.GameOverEvent;
                     gameOverEvt.Winner = evt.Killer;
@@ -40,6 +40,8 @@ namespace BumperBallGame
                 }
                 evt.Killed.SetActive(true);
             }
+            UpdateScoreEvent updateScoreEvt = Events.UpdateScoreEvent;
+            EventManager.Broadcast(updateScoreEvt);
         }
 
         void OnDestroy()

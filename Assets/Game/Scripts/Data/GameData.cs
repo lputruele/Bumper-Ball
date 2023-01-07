@@ -9,7 +9,7 @@ namespace BumperBallGame
     {
         public static GameMode gameMode;
         public static int bots;
-        public static int fragLimit;
+        public static int scoreLimit;
         public static int lives;
     }
 }

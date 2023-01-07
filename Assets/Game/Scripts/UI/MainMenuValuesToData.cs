@@ -13,10 +13,12 @@ namespace Game.UI
         public TMP_Dropdown gameModeUI;
         public Slider botsUI;
         public Slider fragLimitUI;
+        public Slider scoreFlagLimitUI;
         public Slider livesUI;
 
         public GameObject survivalMenu;
         public GameObject deathMatchMenu;
+        public GameObject holdTheFlagMenu;
 
         private ConfigData config;
 
@@ -27,7 +29,8 @@ namespace Game.UI
             {
                 gameModeUI.value = (int)config.gameMode;
                 botsUI.value = config.bots;
-                fragLimitUI.value = config.fragLimit;
+                fragLimitUI.value = config.scoreLimit;
+                scoreFlagLimitUI.value = config.scoreLimit;
                 livesUI.value = config.lives;
             }
             SetGameMode();
@@ -39,17 +42,21 @@ namespace Game.UI
         public void SetGameMode()
         {
             GameData.gameMode = (GameMode)gameModeUI.value;
+            deathMatchMenu.SetActive(false);
+            survivalMenu.SetActive(false);
+            holdTheFlagMenu.SetActive(false);
             if (GameData.gameMode == GameMode.SURVIVAL)
             {
-                deathMatchMenu.SetActive(false);
                 survivalMenu.SetActive(true);
             }
-            else
+            if (GameData.gameMode == GameMode.DEATHMATCH)
             {
                 deathMatchMenu.SetActive(true);
-                survivalMenu.SetActive(false);
             }
-
+            if (GameData.gameMode == GameMode.HOLD_THE_FLAG)
+            {
+                holdTheFlagMenu.SetActive(true);
+            }
         }
 
         public void SetBots()
@@ -59,7 +66,14 @@ namespace Game.UI
 
         public void SetFragLimit()
         {
-            GameData.fragLimit = (int)fragLimitUI.value;
+            if (GameData.gameMode == GameMode.DEATHMATCH)
+            {
+                GameData.scoreLimit = (int)fragLimitUI.value;
+            }
+            else
+            {
+                GameData.scoreLimit = (int)scoreFlagLimitUI.value;
+            }
         }
 
         public void SetLives()
@@ -68,7 +82,7 @@ namespace Game.UI
         }
         public void ValuesToData()
         {
-            config = new ConfigData(GameData.gameMode, GameData.bots, GameData.fragLimit, GameData.lives);
+            config = new ConfigData(GameData.gameMode, GameData.bots, GameData.scoreLimit, GameData.lives);
             SaveSystem.SaveConfig(config);
         }
     }
