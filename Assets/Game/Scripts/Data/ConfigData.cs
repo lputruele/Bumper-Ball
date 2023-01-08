@@ -21,7 +21,7 @@ namespace Game.Persistence
             this.difficulty = difficulty;
             this.bots = bots;
             this.scoreLimitDM = scoreLimitDM;
-            this.scoreLimitDM = scoreLimitHTF;
+            this.scoreLimitHTF = scoreLimitHTF;
             this.lives = lives;
         }
     }
