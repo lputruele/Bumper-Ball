@@ -1,9 +1,10 @@
-using BumperBallGame;
+using Game.Persistence;
+using Game.Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BumperBallGame
+namespace Game.Gameplay
 {
     public class SurvivalManager : GameModeManager
     {

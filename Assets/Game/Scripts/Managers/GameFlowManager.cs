@@ -1,11 +1,10 @@
-using System.Collections;
+using Game.Audio;
+using Game.Persistence;
 using System.Collections.Generic;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-namespace BumperBallGame
+
+namespace Game.Gameplay
 {
     public enum GameMode
     {
@@ -13,11 +12,17 @@ namespace BumperBallGame
         DEATHMATCH,
         HOLD_THE_FLAG
     }
+
+    public enum Difficulty
+    {
+        EASY,
+        NORMAL,
+        HARD
+    }
+
     public class GameFlowManager : MonoBehaviour
     {
         [Header("Parameters")]
-
-        [Tooltip("Sound played on win")] public AudioClip VictorySound;
 
         public GameObject botPrefab;
         public GameObject playerPrefab;
@@ -30,6 +35,7 @@ namespace BumperBallGame
 
         void Awake()
         {
+            Time.timeScale = 1;
             InitializePlayers();
             switch (GameData.gameMode)
             {
@@ -38,7 +44,7 @@ namespace BumperBallGame
                 case GameMode.HOLD_THE_FLAG: gameObject.AddComponent<HoldTheFlagManager>(); flag.SetActive(true); break;
             }
             arena.GetComponentInChildren<Renderer>().material = arenaMaterials[Random.Range(0,arenaMaterials.Count)];
-            EventManager.AddListener<GameOverEvent>(OnGameOver);              
+            EventManager.AddListener<GameOverEvent>(OnGameOver);
         }
 
         void Start()
@@ -51,7 +57,8 @@ namespace BumperBallGame
         void OnGameOver(GameOverEvent evt)
         {
             // play a sound on win
-            AudioUtility.CreateSFX(VictorySound, transform.position, AudioUtility.AudioGroups.HUDVictory, 0f);
+            if (InGameSounds.Instance.VictorySound)
+                AudioUtility.CreateSFX(InGameSounds.Instance.VictorySound, transform.position, AudioUtility.AudioGroups.HUDVictory, 0f);
         }
 
         void OnDestroy()

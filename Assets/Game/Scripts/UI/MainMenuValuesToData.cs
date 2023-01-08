@@ -1,19 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using BumperBallGame;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.Playables;
+using Game.Persistence;
+using Game.Gameplay;
 
 namespace Game.UI
 {
     public class MainMenuValuesToData : MonoBehaviour
     {
         public TMP_Dropdown gameModeUI;
+        public TMP_Dropdown difficultyUI;
         public Slider botsUI;
-        public Slider fragLimitUI;
-        public Slider scoreFlagLimitUI;
+        public Slider scoreLimitDM_UI;
+        public Slider scoreLimitHTF_UI;
         public Slider livesUI;
 
         public GameObject survivalMenu;
@@ -28,14 +27,17 @@ namespace Game.UI
             if (config != null)
             {
                 gameModeUI.value = (int)config.gameMode;
+                difficultyUI.value = (int)config.difficulty;
                 botsUI.value = config.bots;
-                fragLimitUI.value = config.scoreLimit;
-                scoreFlagLimitUI.value = config.scoreLimit;
+                scoreLimitDM_UI.value = config.scoreLimitDM;
+                scoreLimitHTF_UI.value = config.scoreLimitHTF;
                 livesUI.value = config.lives;
             }
             SetGameMode();
+            SetDifficulty();
             SetBots();
-            SetFragLimit();
+            SetScoreLimitDM();
+            SetScoreLimitHTF();
             SetLives();
         }
 
@@ -59,21 +61,24 @@ namespace Game.UI
             }
         }
 
+        public void SetDifficulty()
+        {
+            GameData.difficulty = (Difficulty)difficultyUI.value;
+        }
+
         public void SetBots()
         {
             GameData.bots = (int)botsUI.value;
         }
 
-        public void SetFragLimit()
+        public void SetScoreLimitDM()
         {
-            if (GameData.gameMode == GameMode.DEATHMATCH)
-            {
-                GameData.scoreLimit = (int)fragLimitUI.value;
-            }
-            else
-            {
-                GameData.scoreLimit = (int)scoreFlagLimitUI.value;
-            }
+            GameData.scoreLimitDM = (int)scoreLimitDM_UI.value;
+        }
+
+        public void SetScoreLimitHTF()
+        {
+            GameData.scoreLimitHTF = (int)scoreLimitHTF_UI.value;
         }
 
         public void SetLives()
@@ -82,7 +87,7 @@ namespace Game.UI
         }
         public void ValuesToData()
         {
-            config = new ConfigData(GameData.gameMode, GameData.bots, GameData.scoreLimit, GameData.lives);
+            config = new ConfigData(GameData.gameMode, GameData.difficulty, GameData.bots, GameData.scoreLimitDM, GameData.lives, GameData.scoreLimitHTF);
             SaveSystem.SaveConfig(config);
         }
     }

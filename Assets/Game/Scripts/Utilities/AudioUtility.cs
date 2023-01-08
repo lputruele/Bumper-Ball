@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace BumperBallGame
+namespace Game.Audio
 {
     public class AudioUtility
     {
@@ -28,11 +28,10 @@ namespace BumperBallGame
                 source.clip = clip;
                 source.spatialBlend = spatialBlend;
                 source.minDistance = rolloffDistanceMin;
-                source.Play();
+                
 
                 source.outputAudioMixerGroup = GetAudioGroup(audioGroup);
-
-                m_AudioManager.HandleMultipleSounds();
+                source.Play();
                 m_AudioManager.EnsureSFXDestruction(source);
             }
         }

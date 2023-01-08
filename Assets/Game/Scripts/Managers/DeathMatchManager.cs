@@ -1,9 +1,11 @@
+using Game.Persistence;
+using Game.Player;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BumperBallGame
+namespace Game.Gameplay
 {
     public class DeathMatchManager : GameModeManager
     {
@@ -13,7 +15,7 @@ namespace BumperBallGame
         void Start()
         {
             players = new List<GameObject>();
-            scoreLimit = GameData.scoreLimit;
+            scoreLimit = GameData.scoreLimitDM;
             EventManager.AddListener<PlayerDeathEvent>(OnPlayerDeath);
             BallController[] balls = FindObjectsOfType<BallController>();
             foreach (BallController ball in balls)

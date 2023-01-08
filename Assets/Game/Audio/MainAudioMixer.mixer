@@ -14,6 +14,34 @@ AudioMixerEffectController:
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
+--- !u!244 &-7383502167327478868
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: da5cea1beaefa9b4e833b228d58eb486
+  m_EffectName: Duck Volume
+  m_MixLevel: 8ca9b9adb3789c349ade5404b613d8ce
+  m_Parameters:
+  - m_ParameterName: Threshold
+    m_GUID: 4c6d9fc3fc8c31947919e02f02f3eb14
+  - m_ParameterName: Ratio
+    m_GUID: b52b92d16f948744a8d7b5bd9dff43d8
+  - m_ParameterName: Attack Time
+    m_GUID: d8d463211f237ff48aad141cd0ff3989
+  - m_ParameterName: Release Time
+    m_GUID: 1a67cdca87511134aaad606d420032de
+  - m_ParameterName: Make-up Gain
+    m_GUID: 7355c9f03f8a3814196f5e7da8d65746
+  - m_ParameterName: Knee
+    m_GUID: 10330290e8503d44da27665c18d7828c
+  - m_ParameterName: Sidechain Mix
+    m_GUID: d5ceb5e2d2c14644cbb0312e3829ae00
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!244 &-7037104864873379216
 AudioMixerEffectController:
   m_ObjectHideFlags: 3
@@ -145,11 +173,12 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: a86cccc12d8442145a42c0f7f4a78d3d
   m_FloatValues:
-    c7ef2d10d0978a64db688e3e9c6a8d95: -22.505072
-    13fcee1053320c74a9289d64db114d43: -17.938717
+    c7ef2d10d0978a64db688e3e9c6a8d95: -23.94828
+    13fcee1053320c74a9289d64db114d43: -14.221897
     ff757dd3f0b02304fb0289c2d96601a2: 0.77
     30c654b5ff2009d40b8481e67fd965d5: -19.451395
-    f5a149f683a599b4a8ccb1e7175a7c7b: -18.592384
+    f5a149f683a599b4a8ccb1e7175a7c7b: -16.660433
+    3a58478bb2bd04a448da3628f4725bd0: 2.850226
     890e06eb6d1c0f047822c3e6c57ebeb9: 2.4583216
   m_TransitionOverrides: {}
 --- !u!243 &901129403919103467
@@ -200,6 +229,7 @@ AudioMixerGroupController:
   m_Send: 00000000000000000000000000000000
   m_Effects:
   - {fileID: -7037104864873379216}
+  - {fileID: -7383502167327478868}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0

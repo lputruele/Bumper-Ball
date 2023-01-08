@@ -1,17 +1,15 @@
+using Game.Persistence;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.InputSystem;
-using static UnityEngine.GraphicsBuffer;
 
-namespace BumperBallGame
+namespace Game.Player
 {
     public class AIController : MonoBehaviour
     {
 
         private BallController ball;
         private FieldOfView fov;
+        private float idleLimit;
 
 
         [SerializeField]
@@ -25,7 +23,12 @@ namespace BumperBallGame
 
         private void Start()
         {
-            StartCoroutine(GoIdle());
+            switch (GameData.difficulty)
+            {
+                case Gameplay.Difficulty.EASY: idleLimit = 0.0f; break;
+                case Gameplay.Difficulty.NORMAL: idleLimit = 0.5f; break;
+                case Gameplay.Difficulty.HARD: idleLimit = 1.0f; break;
+            }
         }
 
         private void OnEnable()
@@ -40,10 +43,11 @@ namespace BumperBallGame
 
         private IEnumerator GoIdle()
         {
-            WaitForSeconds wait = new WaitForSeconds(Random.Range(0.1f,0.3f));
+            WaitForSeconds wait;
 
             while (true)
             {
+                wait = new WaitForSeconds(Random.Range(idleLimit, idleLimit + 0.2f));
                 yield return wait;
                 ball.CurrentMove = Vector3.zero;
             }

@@ -1,15 +1,14 @@
-using BumperBallGame;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using Game.Gameplay;
 
-namespace BumperBallGame
+namespace Game.Persistence
 {
     public static class GameData
     {
         public static GameMode gameMode;
+        public static Difficulty difficulty;
         public static int bots;
-        public static int scoreLimit;
+        public static int scoreLimitDM;
+        public static int scoreLimitHTF;
         public static int lives;
     }
 }

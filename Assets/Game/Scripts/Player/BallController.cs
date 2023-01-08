@@ -1,11 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
+using Game.Audio;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
-namespace BumperBallGame
+namespace Game.Player
 {
     public class BallController : MonoBehaviour
     {
@@ -20,6 +16,7 @@ namespace BumperBallGame
         public Vector3 initialPos;
 
         public Vector3 CurrentMove { get; set; }
+        public bool CanMove { get; private set; }
 
         private Rigidbody body;
         private Renderer m_Renderer;
@@ -29,14 +26,10 @@ namespace BumperBallGame
         private float destroyTimer;
         private float ghostTimer;
         private bool bounceOff;
-        private bool canMove;
-        private bool isPlayer;
         private bool gameOver;
-        public bool isGhost;
 
-        public AudioClip BounceSound;
-        public AudioClip DeathSound;
-        public AudioClip SpawnSound;
+        public bool IsPlayer { get; private set; }  
+        public bool IsGhost { get; private set; }
 
 
 
@@ -45,11 +38,11 @@ namespace BumperBallGame
             CurrentMove = Vector3.zero;
             body = GetComponent<Rigidbody>();
             m_Renderer = GetComponent<Renderer>();
-            canMove = true;
+            CanMove = true;
             destroyTimer = float.PositiveInfinity;
             stunTimer = float.NegativeInfinity;
             ghostTimer = float.PositiveInfinity;
-            isPlayer = GetComponent<PlayerController>() != null;
+            IsPlayer = GetComponent<PlayerController>() != null;
             initialPos = transform.position;
             EventManager.AddListener<GameOverEvent>(OnGameOver);
             Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Target"), LayerMask.NameToLayer("Ghost"));
@@ -58,8 +51,8 @@ namespace BumperBallGame
 
         private void OnEnable()
         {
-            if (SpawnSound)
-                AudioUtility.CreateSFX(SpawnSound, transform.position, AudioUtility.AudioGroups.Spawn, 0f);
+            if (InGameSounds.Instance.SpawnSound)
+                AudioUtility.CreateSFX(InGameSounds.Instance.SpawnSound, transform.position, AudioUtility.AudioGroups.Spawn, 0f);
             transform.position = initialPos;
         }
 
@@ -73,7 +66,7 @@ namespace BumperBallGame
             if (ghostTimer < Time.time)
             {
                 ghostTimer = float.PositiveInfinity;
-                isGhost = false;
+                IsGhost = false;
                 gameObject.layer = LayerMask.NameToLayer("Target");
                 Color oldColor = m_Renderer.material.color;
                 Color newColor = new Color(oldColor.r, oldColor.g, oldColor.b, 1.0f);
@@ -90,17 +83,15 @@ namespace BumperBallGame
                 {
                     Vector3 force = -(collision.GetContact(0).point - transform.position).normalized;
                     force.y = 0.0f;
-                    //float bounceSpeed = minBounceSpeed + body.velocity.magnitude;
-                    //float bounceSpeed = minBounceSpeed + collision.rigidbody.velocity.magnitude;
                     float bounceSpeed = BOUNCE_SPEED;
                     body.AddForce(force * MOVE_SPEED * bounceSpeed);
                 }
                 bounceOff = false;
-                stunTimer = isPlayer? Time.time + STUN_TIME_PLAYER : Time.time + STUN_TIME_BOT;
+                stunTimer = IsPlayer? Time.time + STUN_TIME_PLAYER : Time.time + STUN_TIME_BOT;
             }
             else
             {
-                if (stunTimer < Time.time && canMove && !gameOver)
+                if (stunTimer < Time.time && CanMove && !gameOver)
                 {
                     body.AddForce(CurrentMove * MOVE_SPEED);
                 }
@@ -114,8 +105,8 @@ namespace BumperBallGame
                 collision = other;
                 lastPlayerTouched = collision.gameObject;
                 bounceOff = true;
-                if (BounceSound)
-                    AudioUtility.CreateSFX(BounceSound, transform.position, AudioUtility.AudioGroups.Collision, 0f);
+                if (InGameSounds.Instance.BumpSound)
+                    AudioUtility.CreateSFX(InGameSounds.Instance.BumpSound, transform.position, AudioUtility.AudioGroups.Collision, 0f);
                 BumpEvent bumpEvt = Events.BumpEvent;
                 bumpEvt.Bumped = gameObject;
                 bumpEvt.Bumper = other.gameObject;
@@ -124,7 +115,7 @@ namespace BumperBallGame
             else
             {
                 destroyTimer = float.PositiveInfinity;
-                canMove = true;
+                CanMove = true;
             }
         }
 
@@ -132,7 +123,7 @@ namespace BumperBallGame
         {
             if (other.gameObject.tag == "Floor")
             {
-                canMove = false;
+                CanMove = false;
                 destroyTimer = Time.time + DESTROY_TIME;
             }
             collision = null;
@@ -145,7 +136,7 @@ namespace BumperBallGame
                 if (other.transform.position == Vector3.zero)
                 {
                     FlagGrabbedEvent flagGrabbedEvt = Events.FlagGrabbedEvent;
-                    flagGrabbedEvt.grabber = gameObject;
+                    flagGrabbedEvt.Grabber = gameObject;
                     EventManager.Broadcast(flagGrabbedEvt);
                 }
             }
@@ -153,8 +144,6 @@ namespace BumperBallGame
 
         private void Die()
         {
-            //if (DeathSound)
-            //    AudioUtility.CreateSFX(DeathSound, transform.position, AudioUtility.AudioGroups.Death, 0f);
             gameObject.SetActive(false);
             destroyTimer = float.PositiveInfinity;
             PlayerDeathEvent evt = Events.PlayerDeathEvent;
@@ -166,7 +155,7 @@ namespace BumperBallGame
 
         private void TurnInvulnerable ()
         {
-            isGhost = true;
+            IsGhost = true;
             gameObject.layer = LayerMask.NameToLayer("Ghost");
             Color oldColor = m_Renderer.material.color;
             Color newColor = new Color(oldColor.r, oldColor.g, oldColor.b, 0.2f);

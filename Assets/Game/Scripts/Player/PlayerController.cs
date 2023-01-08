@@ -1,9 +1,7 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
 
-namespace BumperBallGame
+namespace Game.Player
 {
     public class PlayerController : MonoBehaviour
     {

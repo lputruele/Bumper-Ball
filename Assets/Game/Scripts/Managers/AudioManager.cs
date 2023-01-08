@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace BumperBallGame
+namespace Game.Audio
 {
     public class AudioManager : MonoBehaviour
     {
@@ -20,12 +20,6 @@ namespace BumperBallGame
             StartCoroutine("DelayedSFXDestruction", source);
         }
 
-        public void HandleMultipleSounds()
-        {
-            CanPlay = false;
-            StartCoroutine("Reset");
-        }
-
 
         private IEnumerator DelayedSFXDestruction(AudioSource source)
         {
@@ -37,11 +31,6 @@ namespace BumperBallGame
             GameObject.Destroy(source.gameObject);
         }
 
-        private IEnumerator Reset()
-        {
-            yield return new WaitForSeconds(.03f);
-            CanPlay = true;
-        }
 
     }
 }

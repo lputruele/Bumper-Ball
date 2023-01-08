@@ -1,9 +1,11 @@
-using System;
+using Game.Audio;
+using Game.Persistence;
+using Game.Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BumperBallGame
+namespace Game.Gameplay
 {
     public class HoldTheFlagManager : GameModeManager
     {
@@ -17,7 +19,7 @@ namespace BumperBallGame
         void Start()
         {
             players = new List<GameObject>();
-            scoreLimit = GameData.scoreLimit;
+            scoreLimit = GameData.scoreLimitHTF;
             bumpTimer = float.NegativeInfinity;
             EventManager.AddListener<PlayerDeathEvent>(OnPlayerDeath);
             EventManager.AddListener<BumpEvent>(OnBump);
@@ -46,7 +48,7 @@ namespace BumperBallGame
 
         private void HolderScoreUpdate()
         {
-            if (flagHolder != null)
+            if (flagHolder != null && flagHolder.GetComponentInChildren<BallController>().CanMove)
             {
                 scores[flagHolder] += 1;
                 if (scores[flagHolder] >= scoreLimit){
@@ -90,14 +92,14 @@ namespace BumperBallGame
             {
                 if (evt.Bumped == flagHolder)
                 {
-                    flagHolder = evt.Bumper;
+                    ChangeFlagHolder(evt.Bumper);
                     bumpTimer = Time.time + BUMP_TIME;
                 }
                 else
                 {
                     if (evt.Bumper == flagHolder)
                     {
-                        flagHolder = evt.Bumped;
+                        ChangeFlagHolder(evt.Bumped);
                         bumpTimer = Time.time + BUMP_TIME;
                     }
                 }
@@ -106,7 +108,14 @@ namespace BumperBallGame
 
         void OnFlagGrabbed(FlagGrabbedEvent evt)
         {
-            flagHolder = evt.grabber;
+            ChangeFlagHolder(evt.Grabber);
+        }
+
+        void ChangeFlagHolder(GameObject newHolder)
+        {
+            if (InGameSounds.Instance.FlagSound)
+                AudioUtility.CreateSFX(InGameSounds.Instance.FlagSound, transform.position, AudioUtility.AudioGroups.Collision, 0f);
+            flagHolder = newHolder;
         }
 
         void OnDestroy()
