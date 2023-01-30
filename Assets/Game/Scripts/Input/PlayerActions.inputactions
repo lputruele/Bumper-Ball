@@ -73,8 +73,8 @@
                 },
                 {
                     "name": "",
-                    "id": "701e6ee7-1fc6-4aeb-bdad-10d53897d429",
-                    "path": "<Touchscreen>/delta",
+                    "id": "2ee23a1e-5b40-4e51-84d0-1aceb0e6a013",
+                    "path": "<Gamepad>/rightStick",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

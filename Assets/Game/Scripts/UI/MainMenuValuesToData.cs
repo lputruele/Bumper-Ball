@@ -14,6 +14,8 @@ namespace Game.UI
         public Slider scoreLimitDM_UI;
         public Slider scoreLimitHTF_UI;
         public Slider livesUI;
+        public Toggle musicToggleUI;
+        public Toggle soundToggleUI;
 
         public GameObject survivalMenu;
         public GameObject deathMatchMenu;
@@ -21,7 +23,7 @@ namespace Game.UI
 
         private ConfigData config;
 
-        private void Start()
+        private void Awake()
         {
             config = SaveSystem.LoadConfig();
             if (config != null)
@@ -32,6 +34,8 @@ namespace Game.UI
                 scoreLimitDM_UI.value = config.scoreLimitDM;
                 scoreLimitHTF_UI.value = config.scoreLimitHTF;
                 livesUI.value = config.lives;
+                musicToggleUI.isOn = config.music;
+                soundToggleUI.isOn = config.sound;
             }
             SetGameMode();
             SetDifficulty();
@@ -39,6 +43,8 @@ namespace Game.UI
             SetScoreLimitDM();
             SetScoreLimitHTF();
             SetLives();
+            SetSound();
+            SetMusic();
         }
 
         public void SetGameMode()
@@ -85,9 +91,20 @@ namespace Game.UI
         {
             GameData.lives = (int)livesUI.value;
         }
+
+        public void SetSound()
+        {
+            GameData.sound = (bool)soundToggleUI.isOn;
+        }
+
+        public void SetMusic()
+        {
+            GameData.music = (bool)musicToggleUI.isOn;
+        }
+
         public void ValuesToData()
         {
-            config = new ConfigData(GameData.gameMode, GameData.difficulty, GameData.bots, GameData.scoreLimitDM, GameData.lives, GameData.scoreLimitHTF);
+            config = new ConfigData(GameData.gameMode, GameData.difficulty, GameData.bots, GameData.scoreLimitDM, GameData.lives, GameData.scoreLimitHTF, GameData.sound, GameData.music);
             SaveSystem.SaveConfig(config);
         }
     }

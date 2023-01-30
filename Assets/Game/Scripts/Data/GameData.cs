@@ -10,5 +10,7 @@ namespace Game.Persistence
         public static int scoreLimitDM;
         public static int scoreLimitHTF;
         public static int lives;
+        public static bool sound;
+        public static bool music;
     }
 }

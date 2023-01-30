@@ -14,8 +14,10 @@ namespace Game.Persistence
         public int scoreLimitDM;
         public int scoreLimitHTF;
         public int lives;
+        public bool sound;
+        public bool music;
 
-        public ConfigData(GameMode gameMode, Difficulty difficulty, int bots, int scoreLimitDM, int lives, int scoreLimitHTF)
+        public ConfigData(GameMode gameMode, Difficulty difficulty, int bots, int scoreLimitDM, int lives, int scoreLimitHTF, bool sound, bool music)
         {
             this.gameMode = gameMode;
             this.difficulty = difficulty;
@@ -23,6 +25,8 @@ namespace Game.Persistence
             this.scoreLimitDM = scoreLimitDM;
             this.scoreLimitHTF = scoreLimitHTF;
             this.lives = lives;
+            this.sound = sound;
+            this.music = music;
         }
     }
 }

@@ -1,3 +1,4 @@
+using Game.Persistence;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -20,7 +21,7 @@ namespace Game.Audio
 
         public static void CreateSFX(AudioClip clip, Vector3 position, AudioGroups audioGroup, float spatialBlend, float rolloffDistanceMin = 1f)
         {
-            if (m_AudioManager != null && m_AudioManager.CanPlay)
+            if (GameData.sound && m_AudioManager != null)
             {
                 GameObject impactSFXInstance = new GameObject("SFX_" + clip.name);
                 impactSFXInstance.transform.position = position;
@@ -70,5 +71,6 @@ namespace Game.Audio
             m_AudioManager.audioMixer.GetFloat("MasterVolume", out var valueInDB);
             return Mathf.Pow(10f, valueInDB / 20.0f);
         }
+
     }
 }

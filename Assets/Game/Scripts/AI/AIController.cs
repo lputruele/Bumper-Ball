@@ -10,6 +10,7 @@ namespace Game.Player
         private BallController ball;
         private FieldOfView fov;
         private float idleLimit;
+        private float idleSpan;
 
 
         [SerializeField]
@@ -25,9 +26,9 @@ namespace Game.Player
         {
             switch (GameData.difficulty)
             {
-                case Gameplay.Difficulty.EASY: idleLimit = 0.0f; break;
-                case Gameplay.Difficulty.NORMAL: idleLimit = 0.5f; break;
-                case Gameplay.Difficulty.HARD: idleLimit = 1.0f; break;
+                case Gameplay.Difficulty.EASY: idleLimit = 0.0f; idleSpan = 0.08f; break;
+                case Gameplay.Difficulty.NORMAL: idleLimit = 0.06f; idleSpan = 0.12f; break;
+                case Gameplay.Difficulty.HARD: idleLimit = 0.15f; idleSpan = 0.25f; break;
             }
         }
 
@@ -47,7 +48,7 @@ namespace Game.Player
 
             while (true)
             {
-                wait = new WaitForSeconds(Random.Range(idleLimit, idleLimit + 0.2f));
+                wait = new WaitForSeconds(Random.Range(idleLimit, idleLimit + idleSpan));
                 yield return wait;
                 ball.CurrentMove = Vector3.zero;
             }

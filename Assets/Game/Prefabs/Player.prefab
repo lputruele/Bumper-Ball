@@ -195,8 +195,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 300
-  m_fontSizeBase: 300
+  m_fontSize: 250
+  m_fontSizeBase: 250
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -397,14 +397,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 202b789c781e18341a66657584994524, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 8.5
-  minBounceSpeed: 10
-  maxBounceSpeed: 25
   initialPos: {x: 0, y: 0, z: 0}
-  isGhost: 0
-  BounceSound: {fileID: 8300000, guid: e11a5a019377fbd4c81caa0adcb4c236, type: 3}
-  DeathSound: {fileID: 8300000, guid: 7e9ee6dc04a5d40d1a5dfc4beb9865e7, type: 3}
-  SpawnSound: {fileID: 8300000, guid: cc6699269b4c1d44ea1e860518b9bb73, type: 3}
 --- !u!54 &6628049737360961355
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -489,8 +482,12 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: e74d74b8-d97a-42df-8f0c-5c3860314926
     m_ActionName: Player/Move[/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b29d6454-2710-41ab-972d-cc530f03bc55
+    m_ActionName: Player/Touch[/Simulated Touchscreen/primaryTouch/startPosition]
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
+  m_DefaultControlScheme: My Control Scheme
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}

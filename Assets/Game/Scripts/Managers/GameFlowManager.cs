@@ -30,8 +30,12 @@ namespace Game.Gameplay
         public List<Material> arenaMaterials;
         public GameObject arena;
         public GameObject flag;
+        public GameObject player;
+
+        public GameModeManager GameModeHandler { get; private set; }
 
         private Vector3[] playerPositions = { new Vector3(-3, 0, -3), new Vector3(3, 0, -3), new Vector3(3, 0, 3), new Vector3(-3, 0, 3) };
+        private string[] botNames = {"Zeus", "Hera", "Ares"};
 
         void Awake()
         {
@@ -43,6 +47,7 @@ namespace Game.Gameplay
                 case GameMode.DEATHMATCH: gameObject.AddComponent<DeathMatchManager>(); break;
                 case GameMode.HOLD_THE_FLAG: gameObject.AddComponent<HoldTheFlagManager>(); flag.SetActive(true); break;
             }
+            GameModeHandler = GetComponent<GameModeManager>();
             arena.GetComponentInChildren<Renderer>().material = arenaMaterials[Random.Range(0,arenaMaterials.Count)];
             EventManager.AddListener<GameOverEvent>(OnGameOver);
         }
@@ -68,14 +73,14 @@ namespace Game.Gameplay
 
         private void InitializePlayers()
         {
-            GameObject player = Instantiate(playerPrefab, playerPositions[0], Quaternion.identity);
+            //GameObject player = Instantiate(playerPrefab, playerPositions[0], Quaternion.identity);
             player.GetComponentInChildren<Renderer>().material = ballMaterials[0];
-            player.name = "1P";
+            player.name = "P1";
             for (int i = 0; i < GameData.bots; i++)
             { 
                 GameObject bot = Instantiate(botPrefab, playerPositions[i+1], Quaternion.identity);
                 bot.GetComponentInChildren<Renderer>().material = ballMaterials[i+1];
-                bot.name = "BOT"+(i+1);
+                bot.name = botNames[i];
             }
         }
     }

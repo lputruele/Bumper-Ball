@@ -1,5 +1,7 @@
+using Game.Persistence;
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -8,12 +10,6 @@ namespace Game.Audio
     public class AudioManager : MonoBehaviour
     {
         public AudioMixer audioMixer;
-        public bool CanPlay { get; set; }
-
-        private void Awake()
-        {
-            CanPlay = true;
-        }
 
         public void EnsureSFXDestruction(AudioSource source)
         {

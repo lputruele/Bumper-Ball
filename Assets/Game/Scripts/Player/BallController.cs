@@ -51,7 +51,7 @@ namespace Game.Player
 
         private void OnEnable()
         {
-            if (InGameSounds.Instance.SpawnSound)
+            if (InGameSounds.Instance != null && InGameSounds.Instance.SpawnSound)
                 AudioUtility.CreateSFX(InGameSounds.Instance.SpawnSound, transform.position, AudioUtility.AudioGroups.Spawn, 0f);
             transform.position = initialPos;
         }
